@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31613.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WialonServer", "WialonServer\WialonServer.csproj", "{0D1E37F2-8E6F-4D38-8F0D-CF0C46A2E73A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D1E37F2-8E6F-4D38-8F0D-CF0C46A2E73A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D1E37F2-8E6F-4D38-8F0D-CF0C46A2E73A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D1E37F2-8E6F-4D38-8F0D-CF0C46A2E73A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D1E37F2-8E6F-4D38-8F0D-CF0C46A2E73A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6CBBF235-2224-409F-AF3D-085AB69CE676}
+	EndGlobalSection
+EndGlobal
