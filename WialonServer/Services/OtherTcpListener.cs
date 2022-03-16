@@ -26,21 +26,19 @@ namespace WialonServer.Services
                 while (true)
                 {
                     Console.Write("Waiting for a connection... ");
-
                     TcpClient client = server.AcceptTcpClient();
                     Console.WriteLine("Connected");
 
                     NetworkStream stream = client.GetStream();
 
-                    while (stream.DataAvailable)
+                    while (stream.Read(bytes, 0, bytes.Length) != 0)
                     {
                         data = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
-                        Console.WriteLine($"Recieved {data}");
-
+                        Console.WriteLine($"Recieve: {data}");
                         data = "Hello client";
-                        byte[] msg= Encoding.ASCII.GetBytes(data);
+                        byte[] msg = Encoding.ASCII.GetBytes(data);
                         stream.Write(msg, 0, msg.Length);
-                        Console.WriteLine($"{data} sended to client" );
+                        Console.WriteLine($"Send:{data} ");
                     }
                     client.Close();
                 }

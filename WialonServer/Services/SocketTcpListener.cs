@@ -31,9 +31,10 @@ namespace WialonServer.Services
 
         public void StartListening()
         {
+            // IPHostEntry ipHostInfo = Dns.GetHostEntry("127.0.0.1");
             IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             IPAddress ipAddress = ipHostInfo.AddressList[0];
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 11_000);
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 8888);
 
             //Create a TCP/IP socket.
             Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -44,11 +45,6 @@ namespace WialonServer.Services
                 listener.Listen(100);
                 Console.WriteLine("Wait for connection");
                 listener.BeginAccept(AcceptCallback, listener);
-
-
-
-
-
             }
             catch (Exception)
             {
@@ -69,7 +65,6 @@ namespace WialonServer.Services
             handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
                 new AsyncCallback(ReadCallBack), state);
         }
-
 
         private void ReadCallBack(IAsyncResult asyncResult)
         {

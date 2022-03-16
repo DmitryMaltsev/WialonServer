@@ -8,8 +8,9 @@ namespace WialonServer
     {
         static void Main(string[] args)
         {
-            OtherTcpListener otherTcpListener = new OtherTcpListener();
-            otherTcpListener.CreateServer();
+            SocketTcpListener otherTcpListener = new SocketTcpListener();
+            otherTcpListener.StartListening();
+            Console.Read();
         }
     }
 }
