@@ -1,12 +1,15 @@
 ﻿using System;
 
+using WialonServer.Services;
+
 namespace WialonServer
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            OtherTcpListener otherTcpListener = new OtherTcpListener();
+            otherTcpListener.CreateServer();
         }
     }
 }

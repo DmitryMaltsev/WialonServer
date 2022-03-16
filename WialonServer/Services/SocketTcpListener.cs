@@ -24,7 +24,7 @@ namespace WialonServer.Services
         public Socket workSocket = null;
     }
 
-    public class TcpListener
+    public class SocketTcpListener
     {
         //thread signal
         public ManualResetEvent allDone = new ManualResetEvent(false);
