@@ -18,10 +18,10 @@ namespace WialonServer
                 threadListen = new Thread(() => serverObject.Listen());
                 threadListen.Start();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 serverObject.Disconnect();
-
+                Console.WriteLine(ex.Message);
             }
 
         }

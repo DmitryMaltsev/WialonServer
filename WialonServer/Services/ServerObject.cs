@@ -12,7 +12,11 @@ namespace WialonServer.Services
     class ServerObject
     {
         TcpListener listener;
-        List<ClientObject> clientObjectList;
+       public List<ClientObject> clientObjectList;
+        public ServerObject()
+        {
+            clientObjectList = new List<ClientObject>();
+        }
         public void Listen()
         {
             try
@@ -24,6 +28,7 @@ namespace WialonServer.Services
                 {
                     TcpClient tcpClient = listener.AcceptTcpClient();
                     ClientObject clientObject = new ClientObject(tcpClient, this);
+                    clientObjectList.Add(clientObject);
                     Thread thread = new Thread(() => clientObject.Process());
                     thread.Start();
                 }
@@ -40,21 +45,25 @@ namespace WialonServer.Services
         public void BroadcastMessage(string message, string id)
         {
             byte[] data = Encoding.Unicode.GetBytes(message);
-            for (int i = 0; i < clientObjectList.Count; i++)
+            if (clientObjectList!=null && clientObjectList.Count>0)
             {
-                if (clientObjectList[i]._id != id)
+                for (int i = 0; i < clientObjectList.Count; i++)
                 {
-                    clientObjectList[i]._stream.Write(data, 0, data.Length);
+                    if (clientObjectList[i]._id != id)
+                    {
+                        clientObjectList[i]._stream.Write(data, 0, data.Length);
+                    }
                 }
             }
+
         }
 
-        private void AddConnection(ClientObject clientObject)
+        public void AddConnection(ClientObject clientObject)
         {
             clientObjectList.Add(clientObject);
         }
 
-        private void RemoveConnection(string id)
+        public void RemoveConnection(string id)
         {
             ClientObject clientObject = clientObjectList.FirstOrDefault(p => p._id == id);
             if (clientObject != null)

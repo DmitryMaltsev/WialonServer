@@ -38,12 +38,15 @@ namespace WialonServer.Services
                     Console.WriteLine(message);
                     _serverObject.BroadcastMessage(message, this._id);
                 }
-                catch
+                catch(Exception ex)
                 {
+                    Console.WriteLine(ex.Message);
                     message = $"{_userName} покинул чат";
                     Console.WriteLine(message);
+                    _serverObject.clientObjectList.Remove(this);
                     _serverObject.BroadcastMessage(message, this._id);
                     //Console.WriteLine(ex.Message);
+                    break;
                 }
             }
 
