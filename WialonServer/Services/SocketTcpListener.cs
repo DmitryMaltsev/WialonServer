@@ -31,26 +31,26 @@ namespace WialonServer.Services
 
         public void StartListening()
         {
-            // IPHostEntry ipHostInfo = Dns.GetHostEntry("127.0.0.1");
-            IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress ipAddress = ipHostInfo.AddressList[0];
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 8888);
+                IPHostEntry ipHostInfo = Dns.GetHostEntry("127.0.0.1");
+                // IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+                IPAddress ipAddress = ipHostInfo.AddressList[0];
+                IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 8888);
 
-            //Create a TCP/IP socket.
-            Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                //Create a TCP/IP socket.
+                Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-            try
-            {
-                listener.Bind(localEndPoint);
-                listener.Listen(100);
-                Console.WriteLine("Wait for connection");
-                listener.BeginAccept(AcceptCallback, listener);
-            }
-            catch (Exception)
-            {
+                try
+                {
+                    listener.Bind(localEndPoint);
+                    listener.Listen(100);
+                    Console.WriteLine("Wait for connection");
+                    listener.BeginAccept(AcceptCallback, listener);
+                }
+                catch (Exception)
+                {
 
-                throw;
-            }
+                    throw;
+                } 
         }
 
         private void AcceptCallback(IAsyncResult asyncResult)
@@ -121,7 +121,7 @@ namespace WialonServer.Services
 
                 handler.Shutdown(SocketShutdown.Both);
                 handler.Close();
-
+                StartListening();
             }
             catch (Exception e)
             {
