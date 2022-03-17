@@ -13,7 +13,7 @@ namespace WialonServer.Services
     {
         TcpListener listener;
         List<ClientObject> clientObjectList;
-        private void Listen()
+        public void Listen()
         {
             try
             {
@@ -64,7 +64,7 @@ namespace WialonServer.Services
         }
 
 
-        private void Disconnect()
+        public void Disconnect()
         {
             listener.Stop();
             for (int i = 0; i < clientObjectList.Count; i++)
