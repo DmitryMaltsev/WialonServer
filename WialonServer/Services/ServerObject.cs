@@ -32,7 +32,6 @@ namespace WialonServer.Services
                     Thread thread = new Thread(() => clientObject.Process());
                     thread.Start();
                 }
-
             }
             catch (Exception ex)
             {
@@ -55,7 +54,6 @@ namespace WialonServer.Services
                     }
                 }
             }
-
         }
 
         public void AddConnection(ClientObject clientObject)

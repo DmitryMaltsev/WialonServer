@@ -40,7 +40,7 @@ namespace WialonServer.Services
                 }
                 catch(Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                //    Console.WriteLine(ex.Message);
                     message = $"{_userName} покинул чат";
                     Console.WriteLine(message);
                     _serverObject.clientObjectList.Remove(this);
