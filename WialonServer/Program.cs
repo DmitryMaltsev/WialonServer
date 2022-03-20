@@ -7,23 +7,13 @@ namespace WialonServer
 {
     class Program
     {
-        static ServerObject serverObject;
-        static Thread threadListen;
+        static TcpServerService TCPServerService;
+      
         
         static void Main(string[] args)
         {
-            try
-            {
-                serverObject = new ServerObject();
-                threadListen = new Thread(() => serverObject.Listen());
-                threadListen.Start();
-            }
-            catch (Exception ex)
-            {
-                serverObject.Disconnect();
-                Console.WriteLine(ex.Message);
-            }
-
+                TCPServerService = new TcpServerService();
+                Thread threadListen = new Thread(() => TCPServerService.StartLIstening(8888));
         }
     }
 }
