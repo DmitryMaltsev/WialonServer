@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -10,7 +11,7 @@ namespace WialonServer.Services
 {
     class TcpServerService
     {
-        public List<TcpClientService> TcpClientServices;
+        public static List<TcpClientService> TcpClientServices;
         public TcpServerService()
         {
             TcpClientServices = new List<TcpClientService>();
@@ -20,15 +21,17 @@ namespace WialonServer.Services
         {
             try
             {
-                TcpListener tcpListener = new TcpListener(port);
+                TcpListener listener = new TcpListener(IPAddress.Any, 8888);
+                listener.Start();
+                Console.WriteLine("Сервер начал свою работу");
                 while (true)
                 {
-                    TcpClient client = tcpListener.AcceptTcpClient();
+                    TcpClient client = listener.AcceptTcpClient();
                     TcpClientService tcpClientService = new TcpClientService(client);
-                    Thread thread = new Thread(() => tcpClientService.Process());
-                    thread.Start();
                     TcpClientServices.Add(tcpClientService);
                     Console.WriteLine($"Клинет с id: {tcpClientService._clientId} подключился");
+                    Thread thread = new Thread(() => tcpClientService.Process());
+                    thread.Start();
                 }
             }
             catch (Exception)

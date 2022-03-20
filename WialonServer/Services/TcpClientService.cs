@@ -17,29 +17,30 @@ namespace WialonServer.Services
         {
             _tcpClient = tcpClient;
             _clientId = Guid.NewGuid().ToString();
-            _networkStream = _tcpClient.GetStream();
+
 
         }
 
         public void Process()
         {
+            _networkStream = _tcpClient.GetStream();
             while (true)
             {
-                try
+                if (RecieveData())
                 {
-                    if (RecieveData())
-                    {
-                        byte[] buffer = { 1 };
-                        sendData(buffer);
-                    }
+                    Console.WriteLine(recievedBytesList.Count);
+                    byte[] buffer = { 1 };
+                    //     sendData(buffer);
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.WriteLine(ex.Message);
-                }
-                finally
-                {
+
+                    TcpClientService clientService = TcpServerService.TcpClientServices.FirstOrDefault(p => p._clientId == _clientId);
+                    if (clientService != null)
+                    TcpServerService.TcpClientServices.Remove(clientService);
+                    Console.WriteLine($"{_clientId} покинул чат");
                     Disconnect();
+                    break;
                 }
             }
         }
@@ -47,20 +48,23 @@ namespace WialonServer.Services
         public bool RecieveData()
         {
             bool recieved = true;
+            bool notRecieved = false;
             recievedBytesList = new List<byte>();
-            byte[] recievedData = new byte[50];
-            do
+            byte[] recievedData = new byte[100];
+            try
             {
-                int length = _networkStream.Read(recievedData, 0, recievedData.Length);
-                byte[] buffer = recievedData.Take(length).ToArray();
-                recievedBytesList.AddRange(buffer);
+                do
+                {
+                    int length = _networkStream.Read(recievedData, 0, recievedData.Length);
+                    byte[] buffer = recievedData.Take(length).ToArray();
+                    recievedBytesList.AddRange(buffer);
+                }
+                while (_networkStream.DataAvailable);
             }
-            while (_networkStream.DataAvailable);
-            for (int i = 0; i < recievedBytesList.Count; i++)
+            catch
             {
-                Console.Write(recievedBytesList);
+                return notRecieved;
             }
-            Console.WriteLine();
             return recieved;
         }
 
@@ -68,7 +72,6 @@ namespace WialonServer.Services
         {
             _networkStream.Write(sendingData, 0, sendingData.Length);
         }
-
 
         public void Disconnect()
         {
