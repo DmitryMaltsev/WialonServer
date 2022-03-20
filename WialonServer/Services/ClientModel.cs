@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WialonServer.Services
 {
-    public class ClientRepository<T>
+    public class ClientModel<T>
     {
         public string ClientId { get; set; }
         public NetworkStream NetWorkStream { get; set; }

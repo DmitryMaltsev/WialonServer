@@ -11,11 +11,11 @@ namespace WialonServer.Services
 {
     class TcpServerService
     {
-        public static List<ClientRepository<byte>> TcpClientsList;
+        public static List<ClientModel<byte>> TcpClientsList;
         private TcpClientService _tcpClientService { get; set; }
         public TcpServerService()
         {
-            TcpClientsList = new List<ClientRepository<byte>>();
+            TcpClientsList = new List<ClientModel<byte>>();
             _tcpClientService = new TcpClientService();
         }
 
@@ -50,7 +50,7 @@ namespace WialonServer.Services
         {
             if (TcpClientsList != null && TcpClientsList.Count > 0)
             {
-                foreach (ClientRepository<byte> tcpClient in TcpClientsList)
+                foreach (ClientModel<byte> tcpClient in TcpClientsList)
                 {
                     _tcpClientService.Disconnect(tcpClient);
                 }

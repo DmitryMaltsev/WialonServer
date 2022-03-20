@@ -9,10 +9,11 @@ namespace WialonServer.Services
 {
     public class TcpClientService
     {
-        public ClientRepository<byte> ClientRepository;
+        public ClientModel<byte> ClientRepository { get; set; }
+
         public void CreateNewClient(TcpClient tcpClient)
         {
-            ClientRepository = new ClientRepository<byte>();
+            ClientRepository = new ClientModel<byte>();
             ClientRepository.ClientTcp = tcpClient;
             ClientRepository.ClientId = Guid.NewGuid().ToString();
             ClientRepository.NetWorkStream = ClientRepository.ClientTcp.GetStream();
@@ -31,7 +32,7 @@ namespace WialonServer.Services
                 }
                 else
                 {
-                    ClientRepository<byte> closingClient = TcpServerService.TcpClientsList.FirstOrDefault(p => p.ClientId == ClientRepository.ClientId);
+                    ClientModel<byte> closingClient = TcpServerService.TcpClientsList.FirstOrDefault(p => p.ClientId == ClientRepository.ClientId);
                     if (closingClient != null)
                         TcpServerService.TcpClientsList.Remove(closingClient);
                     Console.WriteLine($"{closingClient.ClientId} покинул чат");
@@ -69,7 +70,7 @@ namespace WialonServer.Services
             ClientRepository.NetWorkStream.Write(sendingData, 0, sendingData.Length);
         }
 
-        public void Disconnect(ClientRepository<byte> clientRepository)
+        public void Disconnect(ClientModel<byte> clientRepository)
         {
             if (clientRepository.NetWorkStream != null)
                 clientRepository.NetWorkStream.Close();
