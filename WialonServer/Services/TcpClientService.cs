@@ -9,37 +9,33 @@ namespace WialonServer.Services
 {
     public class TcpClientService
     {
-        public string _clientId { get; set; }
-        TcpClient _tcpClient { get; set; }
-        NetworkStream _networkStream { get; set; }
-        public List<byte> recievedBytesList;
-        public TcpClientService(TcpClient tcpClient)
+        public ClientRepository<byte> ClientRepository;
+        public void CreateNewClient(TcpClient tcpClient)
         {
-            _tcpClient = tcpClient;
-            _clientId = Guid.NewGuid().ToString();
-
-
+            ClientRepository = new ClientRepository<byte>();
+            ClientRepository.ClientTcp = tcpClient;
+            ClientRepository.ClientId = Guid.NewGuid().ToString();
+            ClientRepository.NetWorkStream = ClientRepository.ClientTcp.GetStream();
         }
 
         public void Process()
         {
-            _networkStream = _tcpClient.GetStream();
+            //   _networkStream = _tcpClient.GetStream();
             while (true)
             {
                 if (RecieveData())
                 {
-                    Console.WriteLine(recievedBytesList.Count);
+                    Console.WriteLine(ClientRepository.RecievedDataList.Count);
                     byte[] buffer = { 1 };
-                    //     sendData(buffer);
+                    sendData(buffer);
                 }
                 else
                 {
-
-                    TcpClientService clientService = TcpServerService.TcpClientServices.FirstOrDefault(p => p._clientId == _clientId);
-                    if (clientService != null)
-                    TcpServerService.TcpClientServices.Remove(clientService);
-                    Console.WriteLine($"{_clientId} покинул чат");
-                    Disconnect();
+                    ClientRepository<byte> closingClient = TcpServerService.TcpClientsList.FirstOrDefault(p => p.ClientId == ClientRepository.ClientId);
+                    if (closingClient != null)
+                        TcpServerService.TcpClientsList.Remove(closingClient);
+                    Console.WriteLine($"{closingClient.ClientId} покинул чат");
+                    Disconnect(this.ClientRepository);
                     break;
                 }
             }
@@ -49,17 +45,17 @@ namespace WialonServer.Services
         {
             bool recieved = true;
             bool notRecieved = false;
-            recievedBytesList = new List<byte>();
+            ClientRepository.RecievedDataList = new List<byte>();
             byte[] recievedData = new byte[100];
             try
             {
                 do
                 {
-                    int length = _networkStream.Read(recievedData, 0, recievedData.Length);
+                    int length = ClientRepository.NetWorkStream.Read(recievedData, 0, recievedData.Length);
                     byte[] buffer = recievedData.Take(length).ToArray();
-                    recievedBytesList.AddRange(buffer);
+                    ClientRepository.RecievedDataList.AddRange(buffer);
                 }
-                while (_networkStream.DataAvailable);
+                while (ClientRepository.NetWorkStream.DataAvailable);
             }
             catch
             {
@@ -70,15 +66,15 @@ namespace WialonServer.Services
 
         public void sendData(byte[] sendingData)
         {
-            _networkStream.Write(sendingData, 0, sendingData.Length);
+            ClientRepository.NetWorkStream.Write(sendingData, 0, sendingData.Length);
         }
 
-        public void Disconnect()
+        public void Disconnect(ClientRepository<byte> clientRepository)
         {
-            if (_networkStream != null)
-                _networkStream.Close();
-            if (_tcpClient != null)
-                _tcpClient.Close();
+            if (clientRepository.NetWorkStream != null)
+                clientRepository.NetWorkStream.Close();
+            if (clientRepository.ClientTcp != null)
+                clientRepository.ClientTcp.Close();
         }
 
     }

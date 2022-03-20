@@ -11,10 +11,12 @@ namespace WialonServer.Services
 {
     class TcpServerService
     {
-        public static List<TcpClientService> TcpClientServices;
+        public static List<ClientRepository<byte>> TcpClientsList;
+        private TcpClientService _tcpClientService { get; set; }
         public TcpServerService()
         {
-            TcpClientServices = new List<TcpClientService>();
+            TcpClientsList = new List<ClientRepository<byte>>();
+            _tcpClientService = new TcpClientService();
         }
 
         public void StartLIstening(int port)
@@ -27,10 +29,10 @@ namespace WialonServer.Services
                 while (true)
                 {
                     TcpClient client = listener.AcceptTcpClient();
-                    TcpClientService tcpClientService = new TcpClientService(client);
-                    TcpClientServices.Add(tcpClientService);
-                    Console.WriteLine($"Клинет с id: {tcpClientService._clientId} подключился");
-                    Thread thread = new Thread(() => tcpClientService.Process());
+                    _tcpClientService.CreateNewClient(client);
+                    TcpClientsList.Add(_tcpClientService.ClientRepository);
+                    Console.WriteLine($"Клинет с id: {_tcpClientService.ClientRepository.ClientId} подключился");
+                    Thread thread = new Thread(() => _tcpClientService.Process());
                     thread.Start();
                 }
             }
@@ -46,11 +48,11 @@ namespace WialonServer.Services
 
         public void CloseAllConnections()
         {
-            if (TcpClientServices != null && TcpClientServices.Count > 0)
+            if (TcpClientsList != null && TcpClientsList.Count > 0)
             {
-                foreach (TcpClientService tcpClientService in TcpClientServices)
+                foreach (ClientRepository<byte> tcpClient in TcpClientsList)
                 {
-                    tcpClientService.Disconnect();
+                    _tcpClientService.Disconnect(tcpClient);
                 }
             }
         }
