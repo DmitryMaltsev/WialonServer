@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WialonServer.Services
+namespace WialonServer.Models
 {
     public class ClientModel<T>
     {

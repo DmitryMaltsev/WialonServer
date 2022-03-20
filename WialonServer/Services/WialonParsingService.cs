@@ -48,6 +48,8 @@ namespace WialonServer.Services
 
 
 
+
+
         }
 
         private double ConvertByteArrayToValue(byte[] bufferArray)
