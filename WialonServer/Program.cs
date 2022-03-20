@@ -12,9 +12,11 @@ namespace WialonServer
 
         static void Main(string[] args)
         {
-            TCPServerService = new TcpServerService();
-            Thread threadListen = new Thread(() => TCPServerService.StartLIstening(8888));
-            threadListen.Start();
+            //TCPServerService = new TcpServerService();
+            //Thread threadListen = new Thread(() => TCPServerService.StartLIstening(8888));
+            //threadListen.Start();
+            WialonParsingService parsingService = new WialonParsingService();
+            parsingService.ParceData();
         }
     }
 }
