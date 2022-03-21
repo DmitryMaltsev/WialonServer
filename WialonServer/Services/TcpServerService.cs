@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+using WialonServer.Models;
+
 namespace WialonServer.Services
 {
     class TcpServerService

@@ -5,6 +5,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
+using WialonServer.Models;
+
 namespace WialonServer.Services
 {
     public class TcpClientService
