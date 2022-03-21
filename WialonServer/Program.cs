@@ -12,7 +12,7 @@ namespace WialonServer
 {
     class Program
     {
-        private static WialonParsingService parsingService {get;set;}
+        private static WialonParsingService parsingService { get; set; }
         static void Main(string[] args)
         {
 
@@ -42,6 +42,7 @@ namespace WialonServer
                         WialonDataModel wialonDataModel = parsingService.ParseData(TcpServerService.ClientsList[i].RecievedDataList);
                         JsonService jsonService = new JsonService();
                         jsonService.WriteJS(ReadWritePath.JsonPath, wialonDataModel);
+                        TcpServerService.ClientsList[i].RecievedDataList.Clear();
                         TcpServerService.ClientsList[i].DataRecieved = false;
                     }
                 }
