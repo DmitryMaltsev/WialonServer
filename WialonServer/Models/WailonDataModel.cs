@@ -8,7 +8,7 @@ using WialonServer.Models.Interfaces;
 
 namespace WialonServer.Models
 {
-    public class WailonDataModel
+    public class WialonDataModel
     {
         //Размер пакета 
         public int PacketLength { get; set; }

@@ -18,5 +18,7 @@ namespace WialonServer.Models
         public int IsHidden { get; set; }
         //Тип данных блока
         public int BlockDataType { get; set; }
+
+        public string Name { get; set; }
     }
 }

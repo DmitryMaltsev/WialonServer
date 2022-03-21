@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 
+using WialonServer.Models;
 using WialonServer.Services;
 
 namespace WialonServer
@@ -16,7 +17,7 @@ namespace WialonServer
             //Thread threadListen = new Thread(() => TCPServerService.StartLIstening(8888));
             //threadListen.Start();
             WialonParsingService parsingService = new WialonParsingService();
-            parsingService.ParceData();
+            WialonDataModel wialonDataModel = parsingService.ParseData(parsingService.data);
         }
     }
 }
