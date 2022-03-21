@@ -25,6 +25,7 @@ namespace WialonServer.Services
             int startIndex = 0;
 
             byte[] bufferArray = new byte[4];
+            
             Array.Copy(baseArray, 0, bufferArray, 0, 4);
             wialonDataModel.PacketLength = (int)ConvertByteArrayToValue(bufferArray);
             startIndex += 4;

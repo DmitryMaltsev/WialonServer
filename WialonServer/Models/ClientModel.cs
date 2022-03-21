@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace WialonServer.Models
 {
-    public class ClientModel<T>
+    public class ClientModel
     {
         public string ClientId { get; set; }
         public NetworkStream NetWorkStream { get; set; }
         public TcpClient ClientTcp { get; set; }
-        public List<T> RecievedDataList { get; set; }
+        public List<byte> RecievedDataList { get; set; }
+        public bool DataRecieved { get; set; }
     }
 }

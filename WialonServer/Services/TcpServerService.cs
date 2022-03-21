@@ -13,16 +13,16 @@ namespace WialonServer.Services
 {
     class TcpServerService
     {
-        public static List<ClientModel<byte>> TcpClientsList;
-        private TcpClientService _tcpClientService { get; set; }
+        public static List<ClientModel> ClientsList { get; set; }
+
         public TcpServerService()
         {
-            TcpClientsList = new List<ClientModel<byte>>();
-            _tcpClientService = new TcpClientService();
+            ClientsList = new List<ClientModel>();
         }
 
         public void StartLIstening(int port)
         {
+            TcpClientService clientService = new();
             try
             {
                 TcpListener listener = new TcpListener(IPAddress.Any, 8888);
@@ -31,10 +31,10 @@ namespace WialonServer.Services
                 while (true)
                 {
                     TcpClient client = listener.AcceptTcpClient();
-                    _tcpClientService.CreateNewClient(client);
-                    TcpClientsList.Add(_tcpClientService.ClientRepository);
-                    Console.WriteLine($"Клинет с id: {_tcpClientService.ClientRepository.ClientId} подключился");
-                    Thread thread = new Thread(() => _tcpClientService.Process());
+                    ClientModel newClient = clientService.CreateNewClient(client);
+                    ClientsList.Add(newClient);
+                    Console.WriteLine($"Клинет с id: {newClient.ClientId} подключился");
+                    Thread thread = new Thread(() => clientService.Process(newClient));
                     thread.Start();
                 }
             }
@@ -44,17 +44,17 @@ namespace WialonServer.Services
             }
             finally
             {
-                CloseAllConnections();
+                CloseAllConnections(clientService);
             }
         }
 
-        public void CloseAllConnections()
+        public void CloseAllConnections(TcpClientService ClientService)
         {
-            if (TcpClientsList != null && TcpClientsList.Count > 0)
+            if (TcpServerService.ClientsList != null && TcpServerService.ClientsList.Count > 0)
             {
-                foreach (ClientModel<byte> tcpClient in TcpClientsList)
+                for (int i = 0; i < TcpServerService.ClientsList.Count; i++)
                 {
-                    _tcpClientService.Disconnect(tcpClient);
+                    ClientService.Disconnect(TcpServerService.ClientsList[i]);
                 }
             }
         }
