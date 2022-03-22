@@ -14,14 +14,14 @@ namespace WialonServer
 {
     class Program
     {
-        private static IWialonParsingService _parsingService { get; set; }
-        private static IJsonService _jsonService { get; set; }
-        private static ITcpServerService _serverService { get; set; }
+        //private static IWialonParsingService _parsingService { get; set; }
+        //private static IJsonService _jsonService { get; set; }
+       // private static ITcpServerService _serverService { get; set; }
         static void Main(string[] args)
         {
             IWialonParsingService _parsingService = new WialonParsingService();
             IJsonService _jsonService = new JsonService();
-            _serverService = new TcpServerService(_jsonService, _parsingService); 
+            ITcpServerService _serverService = new TcpServerService(_jsonService, _parsingService); 
             Thread threadListen = new Thread(() => _serverService.StartLIstening(8888));
             threadListen.Start();
 

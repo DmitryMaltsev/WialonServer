@@ -59,21 +59,6 @@ namespace WialonServer.Services
             }
         }
 
-        private void ClientClosingCallBack(object sender, string clietnId)
-        {
-            ITcpClientservice closingClient = ClientsList.FirstOrDefault(p => p.ClientModel.ClientId == clietnId);
-            if (closingClient != null)
-            {
-                ClientsList.Remove(closingClient);
-            }
-        }
-
-        public void ClientDatRecievedCallBack(object sender, List<byte> recievedBytes)
-        {
-            WialonDataModel wialonDataModel = _parsingService.ParseData(recievedBytes);
-            _jsonService.WriteJS(ReadWritePath.JsonPath, wialonDataModel);
-        }
-
         public void CloseAllConnections()
         {
             if (ClientsList != null && ClientsList.Count > 0)
@@ -84,5 +69,35 @@ namespace WialonServer.Services
                 }
             }
         }
+
+        #region CallBack methods
+        /// <summary>
+        /// Колбек во время отключения одного из клиентов
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="clietnId"></param>
+        private void ClientClosingCallBack(object sender, string clietnId)
+        {
+            ITcpClientservice closingClient = ClientsList.FirstOrDefault(p => p.ClientModel.ClientId == clietnId);
+            if (closingClient != null)
+            {
+                closingClient.ClientClosingEvent += ClientClosingCallBack;
+                closingClient.DataRecievedEvent += ClientDatRecievedCallBack;
+                ClientsList.Remove(closingClient);
+            }
+        }
+
+        /// <summary>
+        /// Колбек получения данных от клиента
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="recievedBytes"></param>
+        public void ClientDatRecievedCallBack(object sender, List<byte> recievedBytes)
+        {
+            WialonDataModel wialonDataModel = _parsingService.ParseData(recievedBytes);
+            _jsonService.WriteJS(ReadWritePath.JsonPath, wialonDataModel);
+        } 
+        #endregion
+
     }
 }
