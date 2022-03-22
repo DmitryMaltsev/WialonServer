@@ -67,17 +67,18 @@ namespace WialonServer.Services
                 Console.WriteLine(ClientModel.RecievedDataList.Count);
              //   DataRecievedEvent?.Invoke(this, RecievedDataList);
                 IsDataRecieved = true;
+                return true;
             }
             catch
             {
-                return true;
+                IsDataRecieved = false;
+                return false;
             }
-            return false;
         }
 
         public void SendData(byte[] sendingData)
         {
-            ClientModel.NetWorkStream.Write(sendingData, 0, sendingData.Length);
+   //         ClientModel.NetWorkStream.Write(sendingData, 0, sendingData.Length);
         }
 
         public void Disconnect()

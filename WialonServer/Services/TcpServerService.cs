@@ -36,10 +36,10 @@ namespace WialonServer.Services
                     TcpClient client = listener.AcceptTcpClient();
                     ClientModel clientModel = new();
                     TcpClientService clientService = new(clientModel,client);
-              //      clientService.ClientClosingEvent += ClientClosingCallBack;
+                     clientService.ClientClosingEvent += ClientClosingCallBack;
               //      clientService.DataRecievedEvent += ClientDatRecievedCallBack;    
                     Console.WriteLine($"Клинет с id: {clientService.ClientModel.ClientId} подключился");
-                    clientService.Process();
+                  //  clientService.Process();
                     ClientsList.Add(clientService);              
                     Thread thread = new Thread(() => clientService.Process());
                     thread.Start();
