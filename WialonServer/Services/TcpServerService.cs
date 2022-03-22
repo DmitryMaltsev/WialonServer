@@ -12,9 +12,10 @@ using WialonServer.Services.Interfaces;
 
 namespace WialonServer.Services
 {
-    class TcpServerService
+
+    public class TcpServerService : ITcpServerService
     {
-        public static List<ITcpClientservice> ClientsList { get; set; }
+        public List<ITcpClientservice> ClientsList { get; set; }
 
         public TcpServerService()
         {
@@ -33,6 +34,7 @@ namespace WialonServer.Services
                     TcpClient client = listener.AcceptTcpClient();
                     ClientModel clientModel = new();
                     TcpClientService clientService = new(clientModel);
+                    clientService.ClientClosingEvent += ClientClosingCallBack;
                     clientService.CreateNewClient(client);
                     ClientsList.Add(clientService);
                     Console.WriteLine($"Клинет с id: {clientService.ClientModel.ClientId} подключился");
@@ -50,9 +52,13 @@ namespace WialonServer.Services
             }
         }
 
-        private void RemoveConnection(EventArgs e)
+        private void ClientClosingCallBack(object sender, string clietnId)
         {
-
+            ITcpClientservice closingClient = ClientsList.FirstOrDefault(p => p.ClientModel.ClientId == clietnId);
+            if (closingClient != null)
+            {
+                ClientsList.Remove(closingClient);
+            }
         }
 
         public void CloseAllConnections()
