@@ -43,15 +43,14 @@ namespace WialonServer.Services
                     clientService.ClientClosingEvent += ClientClosingCallBack;
                     clientService.DataRecievedEvent += ClientDatRecievedCallBack;
                     Console.WriteLine($"Клинет с id: {clientService.ClientModel.ClientId} подключился");
-                    //  clientService.Process();
                     ClientsList.Add(clientService);
                     Thread thread = new Thread(() => clientService.Process());
                     thread.Start();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                Console.WriteLine(ex.Message);
             }
             finally
             {
@@ -98,6 +97,5 @@ namespace WialonServer.Services
             _jsonService.WriteJS(ReadWritePath.JsonPath, wialonDataModel);
         } 
         #endregion
-
     }
 }
