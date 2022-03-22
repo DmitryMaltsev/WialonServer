@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Services;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -17,10 +19,12 @@ namespace WialonServer.Services
     {
         public List<ITcpClientservice> ClientsList { get; set; }
         private IJsonService _jsonService { get; set; }
-        private IWialonParsingService _wialonParsingService { get; set; }
+        private IWialonParsingService _parsingService { get; set; }
 
         public TcpServerService()
         {
+            _parsingService = new WialonParsingService();
+            _jsonService = new JsonService();
             ClientsList = new List<ITcpClientservice>();
         }
 
@@ -35,12 +39,12 @@ namespace WialonServer.Services
                 {
                     TcpClient client = listener.AcceptTcpClient();
                     ClientModel clientModel = new();
-                    TcpClientService clientService = new(clientModel,client);
-                     clientService.ClientClosingEvent += ClientClosingCallBack;
-              //      clientService.DataRecievedEvent += ClientDatRecievedCallBack;    
+                    TcpClientService clientService = new(clientModel, client);
+                    clientService.ClientClosingEvent += ClientClosingCallBack;
+                    clientService.DataRecievedEvent += ClientDatRecievedCallBack;
                     Console.WriteLine($"Клинет с id: {clientService.ClientModel.ClientId} подключился");
-                  //  clientService.Process();
-                    ClientsList.Add(clientService);              
+                    //  clientService.Process();
+                    ClientsList.Add(clientService);
                     Thread thread = new Thread(() => clientService.Process());
                     thread.Start();
                 }
@@ -64,9 +68,10 @@ namespace WialonServer.Services
             }
         }
 
-        public  void ClientDatRecievedCallBack(object sender, List<byte> recievedBytes)
+        public void ClientDatRecievedCallBack(object sender, List<byte> recievedBytes)
         {
-       
+            WialonDataModel wialonDataModel = _parsingService.ParseData(recievedBytes);
+            _jsonService.WriteJS(ReadWritePath.JsonPath, wialonDataModel);
         }
 
         public void CloseAllConnections()

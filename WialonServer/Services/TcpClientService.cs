@@ -65,7 +65,7 @@ namespace WialonServer.Services
                 }
                 while (ClientModel.NetWorkStream.DataAvailable);
                 Console.WriteLine(ClientModel.RecievedDataList.Count);
-             //   DataRecievedEvent?.Invoke(this, RecievedDataList);
+                DataRecievedEvent?.Invoke(this, ClientModel.RecievedDataList);
                 IsDataRecieved = true;
                 return true;
             }

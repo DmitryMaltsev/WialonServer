@@ -28,7 +28,7 @@ namespace WialonServer
             System.Timers.Timer timer = new System.Timers.Timer(200);
             timer.Elapsed += OnTimedEvent;
             timer.AutoReset = true;
-            timer.Enabled = true;
+         //   timer.Enabled = true;
 
         }
 
@@ -36,7 +36,7 @@ namespace WialonServer
         {
             foreach (ITcpClientservice client in _serverService.ClientsList)
             {
-                if (client.IsDataRecieved && client.ClientModel.RecievedDataList.Count > 0)
+                if (client.IsDataRecieved )
                 {
                     WialonDataModel wialonDataModel = _parsingService.ParseData(client.ClientModel.RecievedDataList);
                     _jsonService.WriteJS(ReadWritePath.JsonPath, wialonDataModel);
