@@ -31,7 +31,7 @@ namespace WialonServer
             if (recievedBytes.Count > 0)
             {
                 WialonDataModel wialonDataModel = parsingService.ParseData(recievedBytes);
-                JsonService jsonService = new JsonService();
+                IJsonService jsonService = new JsonService();
                 jsonService.WriteJS(ReadWritePath.JsonPath, wialonDataModel);
             }
         }

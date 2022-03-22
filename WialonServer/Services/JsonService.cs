@@ -5,9 +5,11 @@ using Microsoft.Win32;
 
 using Newtonsoft.Json;
 
+using WialonServer.Services.Interfaces;
+
 namespace Services
 {
-    public class JsonService
+    public class JsonService : IJsonService
     {
 
 
@@ -20,7 +22,7 @@ namespace Services
         public void WriteJS<T>(string filePath, T settingsModel)
         {
             if (string.IsNullOrEmpty(filePath)) return;
-           // if (!File.Exists(filePath)) File.Create(filePath);
+            // if (!File.Exists(filePath)) File.Create(filePath);
             string js = JsonConvert.SerializeObject(settingsModel, Formatting.Indented);
             using (StreamWriter stream = File.AppendText(filePath))
             {
