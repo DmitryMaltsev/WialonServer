@@ -21,10 +21,10 @@ namespace WialonServer.Services
         private IJsonService _jsonService { get; set; }
         private IWialonParsingService _parsingService { get; set; }
 
-        public TcpServerService()
+        public TcpServerService(IJsonService jsonService, IWialonParsingService parsingService)
         {
-            _parsingService = new WialonParsingService();
-            _jsonService = new JsonService();
+            _parsingService = parsingService;
+            _jsonService = jsonService;
             ClientsList = new List<ITcpClientservice>();
         }
 

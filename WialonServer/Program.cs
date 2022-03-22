@@ -19,29 +19,29 @@ namespace WialonServer
         private static ITcpServerService _serverService { get; set; }
         static void Main(string[] args)
         {
-            _parsingService = new WialonParsingService();
-            _jsonService = new JsonService();
-            _serverService = new TcpServerService(); ;
+            IWialonParsingService _parsingService = new WialonParsingService();
+            IJsonService _jsonService = new JsonService();
+            _serverService = new TcpServerService(_jsonService, _parsingService); 
             Thread threadListen = new Thread(() => _serverService.StartLIstening(8888));
             threadListen.Start();
 
-            System.Timers.Timer timer = new System.Timers.Timer(200);
-            timer.Elapsed += OnTimedEvent;
-            timer.AutoReset = true;
+            //System.Timers.Timer timer = new System.Timers.Timer(200);
+            //timer.Elapsed += OnTimedEvent;
+            //timer.AutoReset = true;
          //   timer.Enabled = true;
 
         }
 
-        private static void OnTimedEvent(Object source, ElapsedEventArgs e)
-        {
-            foreach (ITcpClientservice client in _serverService.ClientsList)
-            {
-                if (client.IsDataRecieved )
-                {
-                    WialonDataModel wialonDataModel = _parsingService.ParseData(client.ClientModel.RecievedDataList);
-                    _jsonService.WriteJS(ReadWritePath.JsonPath, wialonDataModel);
-                }
-            }
-        }
+        //private static void OnTimedEvent(Object source, ElapsedEventArgs e)
+        //{
+        //    foreach (ITcpClientservice client in _serverService.ClientsList)
+        //    {
+        //        if (client.IsDataRecieved )
+        //        {
+        //            WialonDataModel wialonDataModel = _parsingService.ParseData(client.ClientModel.RecievedDataList);
+        //            _jsonService.WriteJS(ReadWritePath.JsonPath, wialonDataModel);
+        //        }
+        //    }
+        //}
     }
 }
