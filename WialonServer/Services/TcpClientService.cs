@@ -66,7 +66,7 @@ namespace WialonServer.Services
                 {
                     int length = ClientModel.NetWorkStream.Read(recievedData, 0, recievedData.Length);
                     byte[] buffer = recievedData.Take(length).ToArray();
-                    ClientModel.RecievedDataList.AddRange(buffer);
+                    RecievedDataList.AddRange(buffer);
                 }
                 while (ClientModel.NetWorkStream.DataAvailable);
                 DataRecievedEvent?.Invoke(this, RecievedDataList);

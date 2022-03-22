@@ -22,15 +22,11 @@ namespace WialonServer
             ITcpServerService serverService = new TcpServerService();
             parsingService = new WialonParsingService();
             Thread threadListen = new Thread(() => serverService.StartLIstening(8888));
-            threadListen.Start();
-            foreach (ITcpClientservice client in serverService.ClientsList)
-            {
-                client.DataRecievedEvent += ClientDatRecievedCallBack;
-            }
+            threadListen.Start();     
         }
 
 
-        private static void ClientDatRecievedCallBack(object sender, List<byte> recievedBytes)
+        public static void ClientDatRecievedCallBack(object sender, List<byte> recievedBytes)
         {
             if (recievedBytes.Count > 0)
             {
