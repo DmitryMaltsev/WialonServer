@@ -14,27 +14,34 @@ namespace WialonServer
 {
     class Program
     {
-        private static ITcpServerService serverService;
-        private static WialonParsingService parsingService { get; set; }
+        private static IWialonParsingService _parsingService { get; set; }
+        private static IJsonService _jsonService { get; set; }
+        private static ITcpServerService _serverService { get; set; }
         static void Main(string[] args)
         {
+            _parsingService = new WialonParsingService();
+            _jsonService = new JsonService();
+            _serverService = new TcpServerService(); ;
+            Thread threadListen = new Thread(() => _serverService.StartLIstening(8888));
+            threadListen.Start();
 
-            ITcpServerService serverService = new TcpServerService();
-            parsingService = new WialonParsingService();
-            Thread threadListen = new Thread(() => serverService.StartLIstening(8888));
-            threadListen.Start();     
+            System.Timers.Timer timer = new System.Timers.Timer(200);
+            timer.Elapsed += OnTimedEvent;
+            timer.AutoReset = true;
+            timer.Enabled = true;
+
         }
 
-
-        public static void ClientDatRecievedCallBack(object sender, List<byte> recievedBytes)
+        private static void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            if (recievedBytes.Count > 0)
+            foreach (ITcpClientservice client in _serverService.ClientsList)
             {
-                WialonDataModel wialonDataModel = parsingService.ParseData(recievedBytes);
-                IJsonService jsonService = new JsonService();
-                jsonService.WriteJS(ReadWritePath.JsonPath, wialonDataModel);
+                if (client.IsDataRecieved && client.ClientModel.RecievedDataList.Count > 0)
+                {
+                    WialonDataModel wialonDataModel = _parsingService.ParseData(client.ClientModel.RecievedDataList);
+                    _jsonService.WriteJS(ReadWritePath.JsonPath, wialonDataModel);
+                }
             }
         }
-
     }
 }

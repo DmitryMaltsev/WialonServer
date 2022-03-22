@@ -16,6 +16,8 @@ namespace WialonServer.Services
     public class TcpServerService : ITcpServerService
     {
         public List<ITcpClientservice> ClientsList { get; set; }
+        private IJsonService _jsonService { get; set; }
+        private IWialonParsingService _wialonParsingService { get; set; }
 
         public TcpServerService()
         {
@@ -33,14 +35,12 @@ namespace WialonServer.Services
                 {
                     TcpClient client = listener.AcceptTcpClient();
                     ClientModel clientModel = new();
-                    TcpClientService clientService = new(clientModel);
-                    clientService.ClientClosingEvent += ClientClosingCallBack;
-                    clientService.DataRecievedEvent += Program.ClientDatRecievedCallBack;
-                    
-                    clientService.CreateNewClient(client);
-                    clientService.Process();
-                    ClientsList.Add(clientService);
+                    TcpClientService clientService = new(clientModel,client);
+              //      clientService.ClientClosingEvent += ClientClosingCallBack;
+              //      clientService.DataRecievedEvent += ClientDatRecievedCallBack;    
                     Console.WriteLine($"Клинет с id: {clientService.ClientModel.ClientId} подключился");
+                    clientService.Process();
+                    ClientsList.Add(clientService);              
                     Thread thread = new Thread(() => clientService.Process());
                     thread.Start();
                 }
@@ -62,6 +62,11 @@ namespace WialonServer.Services
             {
                 ClientsList.Remove(closingClient);
             }
+        }
+
+        public  void ClientDatRecievedCallBack(object sender, List<byte> recievedBytes)
+        {
+       
         }
 
         public void CloseAllConnections()

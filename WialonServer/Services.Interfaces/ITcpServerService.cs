@@ -8,7 +8,7 @@ namespace WialonServer.Services.Interfaces
 {
     public interface ITcpServerService
     {
-        List<ITcpClientservice> ClientsList { get; set; }
+        public List<ITcpClientservice> ClientsList { get; set; }
         void CloseAllConnections();
         void StartLIstening(int port);
     }

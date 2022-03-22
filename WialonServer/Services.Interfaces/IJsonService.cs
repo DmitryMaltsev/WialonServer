@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WialonServer.Services.Interfaces
 {
-    interface IJsonService
+    public interface IJsonService
     {
         T ReadJs<T>(string filePath, T trainData);
         void WriteJS<T>(string filePath, T settingsModel);

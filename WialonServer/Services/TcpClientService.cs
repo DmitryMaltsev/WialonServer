@@ -14,21 +14,18 @@ namespace WialonServer.Services
     public class TcpClientService : ITcpClientservice
     {
         public IClientModel ClientModel { get; set; }
-
+        public bool IsDataRecieved { get; set; }
         public event EventHandler<List<byte>> DataRecievedEvent;
         public event EventHandler<string> ClientClosingEvent;
-
-        public TcpClientService(IClientModel clientModel)
+       
+        public TcpClientService(IClientModel clientModel,TcpClient tcpClient)
         {
-            ClientModel = clientModel;
-        }
-
-        public void CreateNewClient(TcpClient tcpClient)
-        {
+            ClientModel = clientModel;         
             ClientModel.ClientTcp = tcpClient;
             ClientModel.ClientId = Guid.NewGuid().ToString();
             ClientModel.NetWorkStream = tcpClient.GetStream();
             ClientModel.RecievedDataList = new List<byte>();
+            IsDataRecieved = false;
         }
 
         public void Process()
@@ -37,7 +34,6 @@ namespace WialonServer.Services
             {
                 if (RecieveData())
                 {
-                    Console.WriteLine(ClientModel.RecievedDataList.Count);
                     byte[] buffer = { 0x11 };
                     SendData(buffer);
                 }
@@ -56,9 +52,8 @@ namespace WialonServer.Services
 
         public bool RecieveData()
         {
-            bool recieved = true;
-            bool notRecieved = false;
-            List<byte> RecievedDataList = new List<byte>();
+            IsDataRecieved = false;
+            ClientModel.RecievedDataList = new List<byte>();
             byte[] recievedData = new byte[100];
             try
             {
@@ -66,16 +61,18 @@ namespace WialonServer.Services
                 {
                     int length = ClientModel.NetWorkStream.Read(recievedData, 0, recievedData.Length);
                     byte[] buffer = recievedData.Take(length).ToArray();
-                    RecievedDataList.AddRange(buffer);
+                    ClientModel.RecievedDataList.AddRange(buffer);
                 }
                 while (ClientModel.NetWorkStream.DataAvailable);
-                DataRecievedEvent?.Invoke(this, RecievedDataList);
+                Console.WriteLine(ClientModel.RecievedDataList.Count);
+             //   DataRecievedEvent?.Invoke(this, RecievedDataList);
+                IsDataRecieved = true;
             }
             catch
             {
-                return notRecieved;
+                return true;
             }
-            return recieved;
+            return false;
         }
 
         public void SendData(byte[] sendingData)
@@ -90,6 +87,5 @@ namespace WialonServer.Services
             if (ClientModel.ClientTcp != null)
                 ClientModel.ClientTcp.Close();
         }
-
     }
 }
