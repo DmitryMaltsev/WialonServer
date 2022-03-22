@@ -8,21 +8,21 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using WialonServer.Models;
+using WialonServer.Services.Interfaces;
 
 namespace WialonServer.Services
 {
     class TcpServerService
     {
-        public static List<ClientModel> ClientsList { get; set; }
+        public static List<ITcpClientservice> ClientsList { get; set; }
 
         public TcpServerService()
         {
-            ClientsList = new List<ClientModel>();
+            ClientsList = new List<ITcpClientservice>();
         }
 
         public void StartLIstening(int port)
         {
-            TcpClientService clientService = new();
             try
             {
                 TcpListener listener = new TcpListener(IPAddress.Any, 8888);
@@ -31,10 +31,12 @@ namespace WialonServer.Services
                 while (true)
                 {
                     TcpClient client = listener.AcceptTcpClient();
-                    ClientModel newClient = clientService.CreateNewClient(client);
-                    ClientsList.Add(newClient);
-                    Console.WriteLine($"Клинет с id: {newClient.ClientId} подключился");
-                    Thread thread = new Thread(() => clientService.Process(newClient));
+                    ClientModel clientModel = new();
+                    TcpClientService clientService = new(clientModel);
+                    clientService.CreateNewClient(client);
+                    ClientsList.Add(clientService);
+                    Console.WriteLine($"Клинет с id: {clientService.ClientModel.ClientId} подключился");
+                    Thread thread = new Thread(() => clientService.Process());
                     thread.Start();
                 }
             }
@@ -44,17 +46,22 @@ namespace WialonServer.Services
             }
             finally
             {
-                CloseAllConnections(clientService);
+                CloseAllConnections();
             }
         }
 
-        public void CloseAllConnections(TcpClientService ClientService)
+        private void RemoveConnection(EventArgs e)
         {
-            if (TcpServerService.ClientsList != null && TcpServerService.ClientsList.Count > 0)
+
+        }
+
+        public void CloseAllConnections()
+        {
+            if (ClientsList != null && ClientsList.Count > 0)
             {
-                for (int i = 0; i < TcpServerService.ClientsList.Count; i++)
+                for (int i = 0; i < ClientsList.Count; i++)
                 {
-                    ClientService.Disconnect(TcpServerService.ClientsList[i]);
+                    ClientsList[i].Disconnect();
                 }
             }
         }

@@ -6,61 +6,70 @@ using System.Text;
 using System.Threading.Tasks;
 
 using WialonServer.Models;
+using WialonServer.Models.Interfaces;
+using WialonServer.Services.Interfaces;
 
 namespace WialonServer.Services
 {
-    public class TcpClientService
+    public class TcpClientService : ITcpClientservice
     {
+        public IClientModel ClientModel { get; set; }
 
-        public ClientModel CreateNewClient(TcpClient tcpClient)
+        public event EventHandler<List<byte>> DataRecievedEvent;
+        public event EventHandler<string> ClientClosingEvent;
+
+        public TcpClientService(IClientModel clientModel)
         {
-            ClientModel client = new ClientModel();
-            client.ClientTcp = tcpClient;
-            client.ClientId = Guid.NewGuid().ToString();
-            client.NetWorkStream = client.ClientTcp.GetStream();
-            client.RecievedDataList = new List<byte>();
-            client.DataRecieved = false;
-            return client;
+            ClientModel = clientModel;
         }
 
-        public void Process(ClientModel client)
+        public void CreateNewClient(TcpClient tcpClient)
+        {
+            ClientModel.ClientTcp = tcpClient;
+            ClientModel.ClientId = Guid.NewGuid().ToString();
+            ClientModel.NetWorkStream = tcpClient.GetStream();
+            ClientModel.RecievedDataList = new List<byte>();
+        }
+
+        public void Process()
         {
             while (true)
             {
-                if (RecieveData(client))
+                if (RecieveData())
                 {
-                    Console.WriteLine(client.RecievedDataList.Count);
+                    Console.WriteLine(ClientModel.RecievedDataList.Count);
                     byte[] buffer = { 0x11 };
-                    SendData(client, buffer);
-                    client.DataRecieved = true;
+                    SendData(buffer);
                 }
                 else
                 {
-                    ClientModel closingClient = TcpServerService.ClientsList.FirstOrDefault(p => p.ClientId == client.ClientId);
-                    if (closingClient != null)
-                        TcpServerService.ClientsList.Remove(closingClient);
-                    Console.WriteLine($"{closingClient.ClientId} покинул чат");
-                    Disconnect(client);
+                    //ClientModel closingClient = TcpServerService.ClientsList.FirstOrDefault(p => p.ClientId == client.ClientId);
+                    //if (closingClient != null)
+                    //    TcpServerService.ClientsList.Remove(closingClient);
+                    ClientClosingEvent?.Invoke(this, ClientModel.ClientId);
+                    Console.WriteLine($"{ ClientModel.ClientId} покинул чат");
+                    Disconnect();
                     break;
                 }
             }
         }
 
-        public bool RecieveData(ClientModel client)
+        public bool RecieveData()
         {
             bool recieved = true;
             bool notRecieved = false;
-            client.RecievedDataList = new List<byte>();
+            List<byte> RecievedDataList = new List<byte>();
             byte[] recievedData = new byte[100];
             try
             {
                 do
                 {
-                    int length = client.NetWorkStream.Read(recievedData, 0, recievedData.Length);
+                    int length = ClientModel.NetWorkStream.Read(recievedData, 0, recievedData.Length);
                     byte[] buffer = recievedData.Take(length).ToArray();
-                    client.RecievedDataList.AddRange(buffer);
+                    ClientModel.RecievedDataList.AddRange(buffer);
                 }
-                while (client.NetWorkStream.DataAvailable);
+                while (ClientModel.NetWorkStream.DataAvailable);
+                DataRecievedEvent?.Invoke(this, RecievedDataList);
             }
             catch
             {
@@ -69,17 +78,17 @@ namespace WialonServer.Services
             return recieved;
         }
 
-        public void SendData(ClientModel client ,byte[] sendingData)
+        public void SendData(byte[] sendingData)
         {
-            client.NetWorkStream.Write(sendingData, 0, sendingData.Length);
+            ClientModel.NetWorkStream.Write(sendingData, 0, sendingData.Length);
         }
 
-        public void Disconnect(ClientModel clientRepository)
+        public void Disconnect()
         {
-            if (clientRepository.NetWorkStream != null)
-                clientRepository.NetWorkStream.Close();
-            if (clientRepository.ClientTcp != null)
-                clientRepository.ClientTcp.Close();
+            if (ClientModel.NetWorkStream != null)
+                ClientModel.NetWorkStream.Close();
+            if (ClientModel.ClientTcp != null)
+                ClientModel.ClientTcp.Close();
         }
 
     }

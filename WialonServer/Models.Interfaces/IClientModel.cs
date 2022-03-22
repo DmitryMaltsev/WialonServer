@@ -5,15 +5,14 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-using WialonServer.Models.Interfaces;
-
-namespace WialonServer.Models
+namespace WialonServer.Models.Interfaces
 {
-    public class ClientModel:IClientModel
+    public interface IClientModel
     {
         public string ClientId { get; set; }
         public NetworkStream NetWorkStream { get; set; }
         public TcpClient ClientTcp { get; set; }
         public List<byte> RecievedDataList { get; set; }
     }
+
 }

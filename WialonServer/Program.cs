@@ -37,14 +37,11 @@ namespace WialonServer
             {
                 for (int i = 0; i < TcpServerService.ClientsList.Count; i++)
                 {
-                    if (TcpServerService.ClientsList[i].DataRecieved && TcpServerService.ClientsList[i].RecievedDataList.Count > 0)
-                    {
+              
                         WialonDataModel wialonDataModel = parsingService.ParseData(TcpServerService.ClientsList[i].RecievedDataList);
                         JsonService jsonService = new JsonService();
                         jsonService.WriteJS(ReadWritePath.JsonPath, wialonDataModel);
                         TcpServerService.ClientsList[i].RecievedDataList.Clear();
-                        TcpServerService.ClientsList[i].DataRecieved = false;
-                    }
                 }
             }
         }
